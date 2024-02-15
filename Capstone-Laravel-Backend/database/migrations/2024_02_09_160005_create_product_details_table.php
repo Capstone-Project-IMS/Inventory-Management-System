@@ -14,15 +14,14 @@ return new class extends Migration
         Schema::create('product_details', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('product_id');
-            $table->unsignedBigInteger('location_id')->nullable();
             $table->string('color')->nullable();
             $table->string('size')->nullable();
-            $table->float('price',10,2);
+            $table->float('price', 10, 2);
             $table->integer('quantity')->nullable();
             $table->string('barcode')->nullable();
             $table->string('image')->nullable();
             $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
-            $table->foreign('location_id')->references('id')->on('locations')->onDelete('set null');
+            $table->unique(['product_id', 'color', 'size']);
             $table->timestamps();
         });
     }

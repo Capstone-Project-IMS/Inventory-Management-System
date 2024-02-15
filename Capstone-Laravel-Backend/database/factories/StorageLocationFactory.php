@@ -3,11 +3,12 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Models\Location;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Model>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\StorageLocation>
  */
-class SalesOrderDetailsFactory extends Factory
+class StorageLocationFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,7 +18,8 @@ class SalesOrderDetailsFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'location_id' => Location::factory(),
+            'current_capacity' => 0,
         ];
     }
 }

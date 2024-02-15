@@ -2,6 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\Action;
+use App\Models\ProductDetail;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +20,10 @@ class LogFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'user_id' => User::factory(),
+            'product_details_id' => ProductDetail::factory(),
+            'action_id' => Action::factory(),
+            'description' => $this->faker->sentence(),
         ];
     }
 }

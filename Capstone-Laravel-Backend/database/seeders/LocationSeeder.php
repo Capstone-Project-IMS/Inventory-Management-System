@@ -10,9 +10,12 @@ class LocationSeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     * 
+     * @see Location
+     * @see \Database\Factories\LocationFactory
      */
     public function run(): void
     {
-        Location::factory()->count(100)->create();
+        Location::factory()->count(3)->create();
     }
 }

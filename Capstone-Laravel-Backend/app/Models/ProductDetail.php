@@ -16,17 +16,29 @@ class ProductDetail extends Model
     */
     public function product()
     {
-        $this->belongsTo(Product::class);
+        return $this->belongsTo(Product::class);
+    }
+
+    // Storage and floor location
+    /**
+       This configuration has one floor location
+       Many to One
+       * @see FloorLocation::productDetail()
+    */
+
+    public function floorLocation()
+    {
+        return $this->hasOne(FloorLocation::class);
     }
 
     /**
-       This product configuration belongs to 1 location
-       Many to One
-       * @see Location::productDetails()
+        This configuration has many product storages
+        One to Many
+        * @see ProductStorage::productDetail()
     */
-    public function location()
+    public function productStorages()
     {
-        $this->belongsTo(Location::class);
+        return $this->hasMany(ProductStorage::class);
     }
 
     /**
@@ -64,7 +76,8 @@ class ProductDetail extends Model
        One to Many
        * @see Log::productDetail()
     */
-    public function logs(){
+    public function logs()
+    {
         return $this->hasMany(Log::class);
     }
     protected $fillable = [

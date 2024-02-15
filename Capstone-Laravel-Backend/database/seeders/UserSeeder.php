@@ -61,23 +61,34 @@ class UserSeeder extends Seeder
 
         foreach ($users as $user) {
             User::create($user);
+            // put us in employee table with management role
+            Employee::factory()->create([
+                'user_id' => User::where('email', $user['email'])->first()->id,
+                'employee_type_id' => EmployeeType::where('role', 'management')->first()->id,
+            ]);
         }
-        User::factory()->count(50)->create()->each(function ($user) {
+        $userTypeCounts = [
+            1 => 20,
+            2 => 15,
+            3 => 15,
+        ];
 
-            // When making user if their role is employee create an Employee instance from Employee factory
-            if ($user->userType->role == 'employee') {
-                Employee::factory()->create([
-                    'user_id' => $user->id,
-                    'employee_type_id' => EmployeeType::all()->random()->id,
-                ]);
-            }
-            // make vendor instance from vendor factory
-            elseif ($user->userType->role == 'vendor') {
-                Vendor::factory()->create(['user_id' => $user->id]);
-            }
-            elseif ($user->userType->role == 'customer') {
-                Customer::factory()->create(['user_id' => $user->id]);
-            }
-        });
+        foreach ($userTypeCounts as $role => $count) {
+            User::factory()->count($count)->create(['user_type_id' => $role])->each(function ($user) {
+                // When making user if their role is employee create an Employee instance from Employee factory
+                if ($user->userType->role == 'employee') {
+                    Employee::factory()->create([
+                        'user_id' => $user->id,
+                        'employee_type_id' => EmployeeType::all()->random()->id,
+                    ]);
+                }
+                // make vendor instance from vendor factory
+                elseif ($user->userType->role == 'vendor') {
+                    Vendor::factory()->create(['user_id' => $user->id]);
+                } elseif ($user->userType->role == 'customer') {
+                    Customer::factory()->create(['user_id' => $user->id]);
+                }
+            });
+        }
     }
 }

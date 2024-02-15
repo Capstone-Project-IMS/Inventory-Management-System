@@ -7,6 +7,9 @@ use App\Models\Location;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Location>
+ * 
+ * @see \App\Models\Location
+ * @see \Database\Seeders\LocationSeeder
  */
 class LocationFactory extends Factory
 {
@@ -17,33 +20,9 @@ class LocationFactory extends Factory
      */
     public function definition(): array
     {
-        $storageType = ["floor", "storage"];
+        return [
+            'name' => $this->faker->company(),
+        ];
 
-        $name = $this->faker->randomElement(["Location1", "Location2", "Location3"]);
-        $type = $this->faker->randomElement($storageType);
-        $aisle = $this->aisle();
-        $row = rand(1, 10);
-        $position = rand(1, 10);
-        $max_capacity = rand(1, 10);
-        $current_capacity = 0;
-
-        while (Location::where(compact('name', 'type', 'aisle', 'row', 'position'))->exists()) {
-            $name = $this->faker->randomElement(["Location1", "Location2", "Location3"]);
-            $type = $this->faker->randomElement($storageType);
-            $aisle = $this->aisle();
-            $row = rand(1, 10);
-            $position = rand(1, 10);
-            $max_capacity = rand(1, 10);
-            $current_capacity = 0;
-        }
-        return compact('name', 'type', 'aisle', 'row', 'position', 'max_capacity', 'current_capacity');
-
-    }
-
-    public function aisle()
-    {
-        $letter = chr(rand(65, 75));
-        $number = rand(1, 10);
-        return $letter . $number;
     }
 }

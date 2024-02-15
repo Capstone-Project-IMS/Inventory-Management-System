@@ -10,13 +10,25 @@ class Location extends Model
     use HasFactory;
 
     /**
-       This location has many product details
+       This location has many storage locations
        One to Many
-       * @see ProductDetail::location()
+       * @see StorageLocation::location()
     */
-    public function productDetails(){
-        return $this->hasMany(ProductDetail::class);
+    public function storageLocations()
+    {
+        return $this->hasMany(StorageLocation::class);
     }
+
+    /**
+        This location has many floor locations
+        One to Many
+        * @see FloorLocation::location()
+    */
+    public function floorLocations()
+    {
+        return $this->hasMany(FloorLocation::class);
+    }
+    
 
     protected $fillable = [
         'name',

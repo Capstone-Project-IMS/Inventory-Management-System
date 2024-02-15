@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('customer_id')->nullable();
             $table->unsignedBigInteger('employee_id')->nullable();
-            $table->float('total_price',10,2);
+            $table->float('total',10,2);
             $table->timestamp('order_date');
             $table->string('status')->nullable();
             $table->foreign('customer_id')->references('id')->on('customers')->onDelete('set null');

@@ -10,6 +10,10 @@ class EmployeeTypeSeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     * 
+     * 
+     * @see EmployeeType
+     * @see \Database\Factories\EmployeeTypeFactory
      */
     public function run(): void
     {

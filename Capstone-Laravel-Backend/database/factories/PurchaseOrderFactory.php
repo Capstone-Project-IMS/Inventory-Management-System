@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Employee;
+use App\Models\Vendor;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,8 +18,13 @@ class PurchaseOrderFactory extends Factory
      */
     public function definition(): array
     {
+        $status = ["pending", "processing", "completed", "cancelled"];
         return [
-            //
+            'vendor_id' => Vendor::factory(),
+            'employee_id' => Employee::factory(),
+            'total' => 0,
+            'order_date' => $this->faker->dateTimeThisYear,
+            'status' => $this->faker->randomElement($status),
         ];
     }
 }
