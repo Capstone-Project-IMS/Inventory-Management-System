@@ -2,13 +2,14 @@
 
 namespace Database\Factories;
 
+use App\Models\Vendor;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Vendor>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\VendorContact>
  */
-class VendorFactory extends Factory
+class VendorContactFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -18,8 +19,7 @@ class VendorFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->company,
-            'is_approved' => $this->faker->boolean,
+            'user_id' => User::all()->random()->id,
         ];
     }
 }
