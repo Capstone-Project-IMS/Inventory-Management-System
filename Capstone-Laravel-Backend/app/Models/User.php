@@ -2,11 +2,17 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Auth\MustVerifyEmail as MustVerifyEmailTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Notifications\VerifyEmail;
+use App\Notifications\ResetPassword;
+use Illuminate\Contracts\Auth\CanResetPassword;
+use Illuminate\Auth\Passwords\CanResetPassword as CanResetPasswordTrait;
+
 /**
  * References:
  * @see UserType
@@ -14,11 +20,13 @@ use Laravel\Sanctum\HasApiTokens;
  * @see Vendor
  * @see Customer
  * @see Log
-*/
+ */
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable;
+
+    use HasApiTokens, HasFactory, Notifiable, MustVerifyEmailTrait, CanResetPasswordTrait;
+    protected $table = "users";
     /**
         This user belongs to one user type
         Many to One 
@@ -68,6 +76,52 @@ class User extends Authenticatable
     {
         return $this->hasMany(Log::class);
     }
+
+    // get the user's full name
+    public function getFullNameAttribute()
+    {
+        return $this->first_name . ' ' . $this->last_name;
+    }
+
+    // get specific user type
+    public function getRoleAttribute()
+    {
+        if ($this->employee()) {
+            return $this->employee->employeeType->role;
+        } else {
+            return $this->userType->role;
+        }
+    }
+
+    // Checks if user has a specific role
+    public function hasRole($role)
+    {
+        // uses getRoleAttribute to check if it equals the role passed
+        return $this->role == $role;
+    }
+    // find user by email
+    public static function findByEmail($email)
+    {
+        return self::where('email', $email)->first();
+    }
+
+    /**
+       Send email verification notification
+       * @see \App\Notifications\VerifyEmail
+    */
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new VerifyEmail);
+    }
+
+    /**
+       Comment
+       * @see Class::Method
+    */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new ResetPassword($token));
+    }
     /**
      * The attributes that are mass assignable.
      *
@@ -76,7 +130,7 @@ class User extends Authenticatable
     protected $fillable = [
         'first_name',
         'last_name',
-        'user_type',
+        'user_type_id',
         'email',
         'password',
     ];

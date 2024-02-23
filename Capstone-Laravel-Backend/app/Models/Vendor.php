@@ -14,13 +14,13 @@ class Vendor extends Model
     use HasFactory;
 
     /**
-        This vendor instance belongs to one user
-        One to One
-        * @see User::vendor()
-     */
-    public function user()
+       This vendor has many contacts
+       One to Many
+       * @see VendorContact::vendor()
+    */
+    public function contacts()
     {
-        return $this->belongsTo(User::class);
+        return $this->hasMany(VendorContact::class);
     }
 
     /**
@@ -43,6 +43,7 @@ class Vendor extends Model
         return $this->hasMany(PurchaseOrder::class);
     }
     protected $fillable = [
-        'user_id',
+        'name',
+        'is_approved',
     ];
 }

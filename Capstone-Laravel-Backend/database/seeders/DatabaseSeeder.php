@@ -32,6 +32,7 @@ class DatabaseSeeder extends Seeder
                 UserTypeSeeder::class,
                 EmployeeTypeSeeder::class,
                 ActionSeeder::class,
+                VendorSeeder::class,
                 UserSeeder::class,
                 LocationSeeder::class,
                 StorageLocationSeeder::class,

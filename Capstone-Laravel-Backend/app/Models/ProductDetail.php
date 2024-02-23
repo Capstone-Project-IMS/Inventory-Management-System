@@ -80,6 +80,11 @@ class ProductDetail extends Model
     {
         return $this->hasMany(Log::class);
     }
+
+
+    public function getConfigurationAttribute(){
+        return $this->color . " " . $this->size;
+    }
     protected $fillable = [
         'product_id',
         'location_id',

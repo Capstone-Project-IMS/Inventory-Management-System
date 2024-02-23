@@ -16,7 +16,7 @@ class ActionSeeder extends Seeder
      */
     public function run(): void
     {
-        $actions = ["received", "shipped", "returned", "sold", "purchased", "created", "audited", "deleted", "approved", "rejected", "cancelled", "uncancelled", "picked", "packed", "to floor", "to storage"];
+        $actions = ["received", "shipped", "returned", "sold", "purchased", "created", "audited", "deleted", "approved", "rejected", "cancelled", "uncancelled", "picked", "packed", "to floor", "to storage", "login" , "logout", "register", "verify"];
         foreach ($actions as $action) {
             Action::create([
                 'action' => $action,
