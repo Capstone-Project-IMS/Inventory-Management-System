@@ -10,11 +10,12 @@ class UserTypeSeeder extends Seeder
 {
     /**
      * Run the database seeds.
+     * ref
      */
     public function run(): void
     {
         //
-        $roles = ["employee", "customer", "vendor", "corporate"];
+        $roles = ["admin","employee", "customer", "vendor", "corporate"];
 
         foreach ($roles as $role) {
             UserType::create(['role' => $role]);

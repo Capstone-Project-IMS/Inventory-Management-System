@@ -38,12 +38,21 @@ class UserFactory extends Factory
             'last_name' => $this->faker->lastName(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'user_type_id' => UserType::all()->isNotEmpty() ? UserType::inRandomOrder()->first()->id : null,
+            'user_type_id' => $this->faker->randomElement(UserType::pluck('id')->toArray()),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
         ];
     }
 
+    // used to create specific user types
+    public function userType($userTypeId): self
+    {
+        return $this->state(function (array $attributes) use ($userTypeId) {
+            return [
+                'user_type_id' => $userTypeId,
+            ];
+        });
+    }
     /**
      * Indicate that the model's email address should be unverified.
      */
