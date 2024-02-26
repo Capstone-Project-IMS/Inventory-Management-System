@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Model;
  * @see User
  * @see EmployeeType
  * 
-*/
+ */
 class Employee extends Model
 {
     use HasFactory;
@@ -32,7 +32,7 @@ class Employee extends Model
     */
     public function employeeType()
     {
-        return $this->belongsTo(EmployeeType::class, 'role');
+        return $this->belongsTo(EmployeeType::class);
     }
 
     /**
@@ -40,7 +40,8 @@ class Employee extends Model
        One to many
        * @see PurchaseOrder::employee()
     */
-    public function purchaseOrders(){
+    public function purchaseOrders()
+    {
         return $this->hasMany(PurchaseOrder::class);
     }
 
@@ -49,7 +50,8 @@ class Employee extends Model
        One to Many
        * @see SalesOrder::employee()
     */
-    public function salesOrder(){
+    public function salesOrder()
+    {
         return $this->hasMany(SalesOrder::class);
     }
     protected $fillable = [

@@ -20,7 +20,7 @@ class PurchaseOrderFactory extends Factory
     {
         $status = ["pending", "processing", "completed", "cancelled"];
         return [
-            'vendor_id' => Vendor::factory(),
+            'vendor_id' => Vendor::all()->random()->id,
             'employee_id' => Employee::factory(),
             'total' => 0,
             'order_date' => $this->faker->dateTimeThisYear,

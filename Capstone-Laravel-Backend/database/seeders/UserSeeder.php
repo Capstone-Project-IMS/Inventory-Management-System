@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Customer;
 use App\Models\Vendor;
+use App\Models\VendorContact;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use App\Models\User;
@@ -73,8 +74,9 @@ class UserSeeder extends Seeder
             3 => 15,
         ];
 
+        $vendors = Vendor::all();
         foreach ($userTypeCounts as $role => $count) {
-            User::factory()->count($count)->create(['user_type_id' => $role])->each(function ($user) {
+            User::factory()->count($count)->create(['user_type_id' => $role])->each(function ($user) use ($vendors){
                 // When making user if their role is employee create an Employee instance from Employee factory
                 if ($user->userType->role == 'employee') {
                     Employee::factory()->create([
@@ -84,7 +86,7 @@ class UserSeeder extends Seeder
                 }
                 // make vendor instance from vendor factory
                 elseif ($user->userType->role == 'vendor') {
-                    Vendor::factory()->create(['user_id' => $user->id]);
+                    VendorContact::factory()->create(['user_id' => $user->id, 'vendor_id' => $vendors->random()->id]);
                 } elseif ($user->userType->role == 'customer') {
                     Customer::factory()->create(['user_id' => $user->id]);
                 }

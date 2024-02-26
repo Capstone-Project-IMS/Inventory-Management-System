@@ -19,7 +19,7 @@ class ProductFactory extends Factory
     {
         $categories = ["food", 'tech', "clothing", "sport", "toy", "seasonal", "OTC", "home", "office", "cleaning", "bath", "bedding"];
         return [
-            'vendor_id' => Vendor::factory(),
+            'vendor_id' => Vendor::all()->random()->id,
             'name' => $this->faker->word,
             'description' => $this->faker->sentence(),
             'category' => $this->faker->randomElement($categories),
