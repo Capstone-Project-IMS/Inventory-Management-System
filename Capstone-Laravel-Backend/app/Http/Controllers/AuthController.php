@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Action;
 use App\Models\Customer;
+use App\Models\EmployeeType;
 use App\Models\Log;
 use App\Models\User;
+use App\Models\UserType;
 use App\Models\Vendor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,47 +19,15 @@ use Illuminate\Support\Facades\DB;
 
 class AuthController extends Controller
 {
+    // So we can use the createUser function from the UserController
+    protected $userController;
 
-    // Creating a customer
-    public function register(Request $request)
+    public function __construct(UserController $userController)
     {
-        // Use the createUser function to use input to create a user with user type 2 (customer)
-        $userOrResponse = $this->createUser($request, 2);
-        if (get_class($userOrResponse) == 'Illuminate\Http\JsonResponse') {
-            return $userOrResponse;
-        } else {
-            $user = $userOrResponse;
-        }
-        Customer::create([
-            'user_id' => $user->id,
-        ]);
-
-        $user->sendEmailVerificationNotification();
-
-        // Return a json success message and the user that was created
-        return $this->successResponse('User created successfully', $user);
-
+        $this->userController = $userController;
     }
 
-    public function registerEmployee(Request $request)
-    {
-        $currentUser = Auth::user();
-        if ($currentUser && $currentUser->role == 'manager') {
-            $user = $this->createUser($request, 1);
-            Employee::create([
-                'user_id' => $user->id,
-                'employee_type_id' => $request->employee_type_id,
-            ]);
-
-            $user->sendEmailVerificationNotification();
-            return $this->successResponse('User created successfully', $user);
-        } else {
-            return $this->errorResponse('Unauthorized');
-        }
-    }
-
-
-
+    // login
     public function login(Request $request)
     {
         $request->validate(
@@ -88,19 +58,18 @@ class AuthController extends Controller
                 // return the user and the token
                 return $this->successResponse('Login Successful', [
                     'success' => true,
-                    'user' => Auth::user(),
                     'access_token' => $token,
                     'token_type' => 'Bearer',
                 ], 200);
             }
             // if email is not verified
             else {
-                return $this->errorResponse('Email not verified');
+                return $this->errorResponse('Email not verified', 401);
             }
         }
         // if login fails
         else {
-            return $this->errorResponse('Invalid credentials');
+            return $this->errorResponse('Invalid credentials', 401);
         }
     }
 
@@ -117,67 +86,6 @@ class AuthController extends Controller
         // Deletes the token from the database
         $request->user()->currentAccessToken()->delete();
         return $this->successResponse('Logged out successfully');
-    }
-
-
-    // Helper function to create a user with basic user information
-    private function createUser(Request $request, $userTypeId)
-    {
-        $request->validate(
-            [
-                'first_name' => 'required|string',
-                'last_name' => 'required|string',
-                'email' => 'required|email|unique:users',
-                'password' => [
-                        'required',
-                        'string',
-                        // must be at least 8 characters
-                        'min:8',
-                        // must contain at least one lowercase letter            
-                        'regex:/[a-z]/',
-                        // must contain at least one uppercase letter     
-                        'regex:/[A-Z]/',
-                        // must contain at least one digit     
-                        'regex:/[0-9]/',
-                        // must contain a special character     
-                        'regex:/[@$!%*#?&]/',
-                    ],
-                'confirm_password' => 'required|same:password',
-            ],
-            // Custom error messages for each input error
-            [
-                'first_name.required' => 'Please Enter First Name',
-                'last_name.required' => 'Please Enter Last Name',
-                'email.required' => 'Please Enter Email',
-                'email.email' => 'Email is invalid',
-                'email.unique' => 'Email is already taken',
-                'password.required' => 'Please Enter Password',
-                'password.min' => 'Password must be at least 8 characters',
-                'password.regex' => 'Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character',
-                'confirm_password.required' => 'Confirm password is required',
-                'confirm_password.same' => 'Passwords does not match',
-            ]
-        );
-
-        // Create basic user with whatever user type is passed
-        User::create([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'email' => $request->email,
-            'password' => $request->password,
-            'user_type_id' => $userTypeId,
-        ]);
-        // get the user that was just created
-        $user = User::findByEmail($request->email);
-        // Create log for registration
-        $registerAction = Action::getByName('register');
-        Log::create([
-            'user_id' => $user->id,
-            'action_id' => $registerAction->id,
-        ]);
-
-        // return the user to use to create employee or customer
-        return $user;
     }
 
     // method that runs when the user clicks the link in the email
@@ -197,6 +105,7 @@ class AuthController extends Controller
             Log::create([
                 'user_id' => $user->id,
                 'action_id' => $verifyAction->id,
+                'description' => 'Verified Email Address',
             ]);
 
             // return email verified message
@@ -209,20 +118,24 @@ class AuthController extends Controller
     // Sends forgot password email
     public function forgotPassword(Request $request)
     {
+        // Validate the email
         $request->validate(['email' => 'required|email|exists:users,email'], [
             'email.required' => 'Please Enter Email',
             'email.email' => 'Email is invalid',
             'email.exists' => 'Email does not exist'
         ]);
 
+        // Send password reset email, also creates a token in the database
         $status = Password::sendResetLink(
             ['email' => $request->email,]
         );
 
+        // Get the token from the database where the email is the same as the request email
         $token = DB::table('password_reset_tokens')->where('email', $request->email)->value('token');
 
+        // if the email was sent successfully return success message if not return error message
         return $status === Password::RESET_LINK_SENT
-            ? $this->successResponse('Email sent successfully', ['token' => $token])
+            ? $this->successResponse('Email sent successfully')
             : $this->errorResponse('Email could not be sent');
     }
 
@@ -262,20 +175,24 @@ class AuthController extends Controller
             ]
         );
 
+        // Reset the password with information from the request
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user, $password) {
+                // uses the forceFill method to set the password because the password is hashed and not fillable
                 $user->forceFill([
                     'password' => $password
                 ])->save();
             }
         );
+        // if the password was reset successfully return success message if not return error message
         return $status == Password::PASSWORD_RESET
             ? $this->successResponse('Password reset successfully')
             : $this->errorResponse('Password could not be reset');
     }
 
     // Link thats in reset password email
+    //TODO: Deep link to Flutter app to display a form to reset password with token somwehere
     public function resetPasswordForm(Request $request)
     {
         $testEmail = DB::table('password_reset_tokens')->where('token', $request->token)->value('email');

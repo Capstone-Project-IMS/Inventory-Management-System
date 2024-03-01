@@ -15,7 +15,7 @@ return new class extends Migration {
             $table->id();
             $table->unsignedBigInteger('vendor_id');
             $table->unsignedBigInteger('user_id');
-            $table->boolean('is_approved')->default(false);
+            $table->boolean('is_primary')->default(false);
             $table->foreign('vendor_id')->references('id')->on('vendors')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();

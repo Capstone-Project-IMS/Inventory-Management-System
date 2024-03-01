@@ -12,8 +12,6 @@ class Authenticate extends Middleware
      */
     protected function redirectTo(Request $request): ?string
     {
-        if (!$request->expectsJson()) {
-            abort(401, 'Not Signed In. Please sign in to continue.');
-        }
+        return null;
     }
 }

@@ -50,12 +50,13 @@ class Employee extends Model
        One to Many
        * @see SalesOrder::employee()
     */
-    public function salesOrder()
+    public function salesOrders()
     {
         return $this->hasMany(SalesOrder::class);
     }
     protected $fillable = [
         'user_id',
+        'employee_type_id',
         'role',
     ];
 }

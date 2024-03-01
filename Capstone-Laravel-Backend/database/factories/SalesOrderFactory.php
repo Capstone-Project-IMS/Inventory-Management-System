@@ -20,8 +20,8 @@ class SalesOrderFactory extends Factory
     {
         $status = ["pending", "processing", "completed", "cancelled"];
         return [
-            'customer_id' => Customer::factory(),
-            'employee_id' => Employee::factory(),
+            'customer_id' => Customer::all()->random()->id,
+            'employee_id' => Employee::all()->random()->id,
             'total' => 0,
             'order_date' => $this->faker->dateTimeThisYear,
             'status' => $this->faker->randomElement($status),
