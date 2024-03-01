@@ -7,6 +7,7 @@ use Auth;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\Vendor;
+use Illuminate\Validation\Rule;
 
 class VendorController extends Controller
 {
@@ -23,7 +24,17 @@ class VendorController extends Controller
     public function register(Request $request)
     {
         // Creating a vendor as Primary Contact where company name is unique
-        $request->validate(['name' => 'required|string|unique:vendors'],['name.required' => 'Please Enter Vendor Name', 'name.unique' => 'Company Name Already Exists']);
+        $request->validate(
+            ['name' => 
+            [
+                'required',
+                'string',
+                Rule::unique('vendors')->where(function ($query) use ($request) {
+                    return $query->whereRaw('LOWER(name) = ?', strtolower($request->name));
+                }),
+            ]],
+            ['name.required' => 'Please Enter Vendor Name', 'name.unique' => 'Company Name Already Exists']
+        );
         // Use the createUser function to use input to create a user with contact info of primary contact
         $userOrResponse = $this->userController->createUser($request, 3);
         if ($userOrResponse instanceof JsonResponse) {
@@ -51,9 +62,10 @@ class VendorController extends Controller
     }
 
     // add a non-primary contact to a vendor, must be a primary contact to add a non-primary contact
-    public function addContact(Request $request){
+    public function addContact(Request $request)
+    {
         $currentUser = Auth::user();
-        if($currentUser && $currentUser->role == 'vendor' && $currentUser->vendorContact->is_primary){
+        if ($currentUser && $currentUser->role == 'vendor' && $currentUser->vendorContact->is_primary) {
             $userOrResponse = $this->userController->createUser($request, 3);
             if ($userOrResponse instanceof JsonResponse) {
                 return $userOrResponse;

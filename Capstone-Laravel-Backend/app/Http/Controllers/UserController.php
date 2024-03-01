@@ -45,7 +45,7 @@ class UserController extends Controller
                 'password.required' => 'Please Enter Password',
                 'password.min' => 'Password must be at least 8 characters',
                 'password.regex' => 'Password must contain at least one lowercase letter, one uppercase letter, one digit, and one special character',
-                'confirm_password.required' => 'Confirm password is required',
+                'confirm_password.required' => 'Please Confirm Password',
                 'confirm_password.same' => 'Passwords does not match',
             ]
         );

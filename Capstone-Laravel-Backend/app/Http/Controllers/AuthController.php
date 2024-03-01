@@ -105,6 +105,7 @@ class AuthController extends Controller
             Log::create([
                 'user_id' => $user->id,
                 'action_id' => $verifyAction->id,
+                'description' => 'Verified Email Address',
             ]);
 
             // return email verified message
@@ -117,20 +118,24 @@ class AuthController extends Controller
     // Sends forgot password email
     public function forgotPassword(Request $request)
     {
+        // Validate the email
         $request->validate(['email' => 'required|email|exists:users,email'], [
             'email.required' => 'Please Enter Email',
             'email.email' => 'Email is invalid',
             'email.exists' => 'Email does not exist'
         ]);
 
+        // Send password reset email, also creates a token in the database
         $status = Password::sendResetLink(
             ['email' => $request->email,]
         );
 
+        // Get the token from the database where the email is the same as the request email
         $token = DB::table('password_reset_tokens')->where('email', $request->email)->value('token');
 
+        // if the email was sent successfully return success message if not return error message
         return $status === Password::RESET_LINK_SENT
-            ? $this->successResponse('Email sent successfully', ['token' => $token])
+            ? $this->successResponse('Email sent successfully')
             : $this->errorResponse('Email could not be sent');
     }
 
@@ -170,20 +175,24 @@ class AuthController extends Controller
             ]
         );
 
+        // Reset the password with information from the request
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user, $password) {
+                // uses the forceFill method to set the password because the password is hashed and not fillable
                 $user->forceFill([
                     'password' => $password
                 ])->save();
             }
         );
+        // if the password was reset successfully return success message if not return error message
         return $status == Password::PASSWORD_RESET
             ? $this->successResponse('Password reset successfully')
             : $this->errorResponse('Password could not be reset');
     }
 
     // Link thats in reset password email
+    //TODO: Deep link to Flutter app to display a form to reset password with token somwehere
     public function resetPasswordForm(Request $request)
     {
         $testEmail = DB::table('password_reset_tokens')->where('token', $request->token)->value('email');
