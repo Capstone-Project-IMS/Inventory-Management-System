@@ -25,7 +25,7 @@ class SalesOrder extends Model
        * @see Employee::salesOrders()
     */
     public function employee(){
-        $this->belongsTo(Employee::class);
+        return $this->belongsTo(Employee::class);
     }
 
     /**
@@ -33,8 +33,13 @@ class SalesOrder extends Model
        One to Many
        * @see SalesOrderDetail::salesOrder()
     */
-    public function salesOrderDetail(){
+    public function salesOrderDetails(){
         return $this->hasMany(SalesOrderDetail::class);
+    }
+
+    // load all relations
+    public function loadAllRelations(){
+        return $this->load('customer', 'customer.user', 'employee', 'employee.user', 'salesOrderDetails', 'salesOrderDetails.productDetail', 'salesOrderDetails.productDetail.product');
     }
 
     protected $fillable = [

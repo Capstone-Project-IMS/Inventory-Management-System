@@ -14,7 +14,8 @@ class SalesOrderDetail extends Model
        Many to One
        * @see SalesOrder::salesOrderDetail()
     */
-    public function salesOrder(){
+    public function salesOrder()
+    {
         return $this->belongsTo(SalesOrder::class);
     }
 
@@ -23,7 +24,8 @@ class SalesOrderDetail extends Model
        Many to One
        * @see ProductDetail::salesOrderDetails()
     */
-    public function productDetail(){
+    public function productDetail()
+    {
         return $this->belongsTo(ProductDetail::class);
     }
 
