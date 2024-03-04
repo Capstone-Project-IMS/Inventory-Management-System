@@ -32,6 +32,11 @@ class Product extends Model
         return $this->productDetails->sum('quantity');
     }
 
+    // load all relations
+    public function loadAllRelations(){
+        return $this->load('vendor', 'productDetails', 'productDetails.productStorages', 'productDetails.floorLocation', 'productDetails.priority', 'productDetails.logs', 'productDetails.purchaseOrderDetails', 'productDetails.salesOrderDetails');
+    }
+
     protected $fillable = [
         'vendor_id',
         'name',

@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\ProductDetailsController;
 use App\Http\Controllers\VendorController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -40,6 +42,14 @@ Route::get('/password/reset/{token}', [AuthController::class, 'resetPasswordForm
 
 // Resets password
 Route::post('/password/reset', [AuthController::class, 'resetPassword'])->name('password.reset');
+
+//? Idk how to handle guests in flutter so if a user is not logged in they can still view products but ill put these here for now
+//* View all products
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+//* View individual product will use /products because /product will be used for product details
+Route::get('/products/{id}', [ProductController::class, 'show'])->name('product.show');
+//* Get specific product detail
+Route::get('/product/{id}', [ProductDetailsController::class, 'show'])->name('product.show');
 
 
 //* All routes below this line require a valid token

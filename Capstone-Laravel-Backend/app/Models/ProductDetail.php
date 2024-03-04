@@ -28,7 +28,7 @@ class ProductDetail extends Model
 
     public function floorLocation()
     {
-        return $this->hasOne(FloorLocation::class);
+        return $this->hasOne(FloorLocation::class, 'product_details_id');
     }
 
     /**
@@ -38,7 +38,7 @@ class ProductDetail extends Model
     */
     public function productStorages()
     {
-        return $this->hasMany(ProductStorage::class);
+        return $this->hasMany(ProductStorage::class, 'product_details_id');
     }
 
     /**
@@ -48,7 +48,7 @@ class ProductDetail extends Model
     */
     public function priority()
     {
-        return $this->hasOne(ProductPriority::class);
+        return $this->hasOne(ProductPriority::class, 'product_details_id');
     }
 
     /**
@@ -58,7 +58,7 @@ class ProductDetail extends Model
     */
     public function purchaseOrderDetails()
     {
-        return $this->hasMany(PurchaseOrderDetail::class);
+        return $this->hasMany(PurchaseOrderDetail::class, 'product_details_id');
     }
 
     /**
@@ -68,7 +68,7 @@ class ProductDetail extends Model
     */
     public function salesOrderDetails()
     {
-        return $this->hasMany(SalesOrderDetail::class);
+        return $this->hasMany(SalesOrderDetail::class, 'product_details_id');
     }
 
     /**
@@ -78,12 +78,19 @@ class ProductDetail extends Model
     */
     public function logs()
     {
-        return $this->hasMany(Log::class);
+        return $this->hasMany(Log::class, 'product_details_id');
     }
 
 
-    public function getConfigurationAttribute(){
+    public function getConfigurationAttribute()
+    {
         return $this->color . " " . $this->size;
+    }
+
+    // Load all relations
+    public function loadAllRelations()
+    {
+        return $this->load('product', 'floorLocation', 'productStorages', 'priority', 'logs', 'purchaseOrderDetails', 'salesOrderDetails', 'floorLocation.location', 'productStorages.storageLocation', 'productStorages.storageLocation.location');
     }
     protected $fillable = [
         'product_id',
