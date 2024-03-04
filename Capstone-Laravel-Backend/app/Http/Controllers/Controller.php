@@ -13,9 +13,13 @@ class Controller extends BaseController
     // All controllers inherit from this class
 
     // Method to get models with their relations
-    public function modelWithRelations($model, $relations)
+    public function modelWithRelations($model, $relations, $column = null, $value = null)
     {
-        return $model::with($relations)->get();
+        $query = $model::with($relations);
+        if ($column !== null && $value !== null) {
+            return $query->where($column, $value);
+        }
+        return $query->get();
     }
 
     // Methods to return success and error responses

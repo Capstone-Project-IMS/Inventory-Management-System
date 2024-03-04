@@ -112,6 +112,12 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->role == $roles || $this->type == $roles;
     }
 
+    public function isEmployee()
+    {
+        $employeeRoles = EmployeeType::all()->pluck('role')->toArray();
+        return in_array($this->role, $employeeRoles) || $this->role == 'admin';
+    }
+
     // find user by email
     public static function findByEmail($email)
     {
@@ -208,7 +214,7 @@ class User extends Authenticatable implements MustVerifyEmail
                     ->orWhere('email', 'like', '%' . $searchVal . '%');
             }
 
-        } else {
+        } elseif ($this->hasRole(['general', 'fulfillment', 'receiving'])) {
             // Other employees can only search other employees
             if (is_numeric($searchVal)) {
                 $searchVal = (int) $searchVal;

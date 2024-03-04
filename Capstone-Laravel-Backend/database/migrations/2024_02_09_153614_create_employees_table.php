@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('employee_type_id');
+            $table->decimal('hourly_rate', 8, 2)->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('employee_type_id')->references('id')->on('employee_type')->onDelete('cascade');
             $table->timestamps();

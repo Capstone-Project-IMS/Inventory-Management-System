@@ -42,16 +42,43 @@ Route::get('/password/reset/{token}', [AuthController::class, 'resetPasswordForm
 Route::post('/password/reset', [AuthController::class, 'resetPassword'])->name('password.reset');
 
 
-// All routes below this line require a valid token
+//* All routes below this line require a valid token
 Route::middleware('auth:sanctum')->group(function () {
     // Get the logged in user information with relationships
     Route::get('/user', [UserController::class, 'dashboard'])->name('app.user');
+    // Edit user information
+    Route::patch('/user', [UserController::class, 'update'])->middleware('user.update')->name('user.update');
+    // Delete user
+    Route::delete('/user', [UserController::class, 'destroy'])->name('user.destroy');
 
-    // Employee registration only accessible by managers
-    Route::post('/register/employee', [EmployeeController::class, 'register'])->name('employee.register');
+    // Get all users as admin
+    Route::get('/users', [UserController::class, 'index'])->middleware('role:admin')->name('users.index');
 
     // Vendor add contact only accessible by primary contacts
     Route::post('/vendor/addContact', [VendorController::class, 'addContact'])->name('vendor.add.contact');
+
+    //* Employee clock in/out
+    Route::post('/employee/clock', [EmployeeController::class, 'clock'])->middleware('role:management,general,fulfillment,receiving')->name('employee.clock');
+
+    //* MANAGER ONLY ROUTES
+    Route::middleware('role:management')->group(function () {
+
+        // Employee registration
+        Route::post('/register/employee', [EmployeeController::class, 'register'])->name('employee.register');
+        // Get all employees
+        Route::get('/employees', [EmployeeController::class, 'index'])->name('employees.index');
+        // Get single employee
+        Route::get('/employee/{id}', [EmployeeController::class, 'show'])->name('employee.show');
+        // Update employee employee type or hourly rate
+        Route::put('/employee/{id}', [EmployeeController::class, 'update'])->name('employee.update');
+        // Edit employee user information pass the user id of the employee you want to edit
+        Route::patch('/employee/{user}/user', [UserController::class, 'update'])->middleware('user.update')->name('employee.user.update');
+        // Delete employee
+        Route::delete('/employee/{id}', [EmployeeController::class, 'destroy'])->name('employee.destroy');
+
+
+    });
+
 
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('app.logout');

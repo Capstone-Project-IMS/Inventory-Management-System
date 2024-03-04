@@ -22,6 +22,7 @@ class EmployeeFactory extends Factory
         return [
             // random employee type
             'employee_type_id' => EmployeeType::all()->random()->id,
+            'hourly_rate' => $this->faker->randomFloat(2, 10, 35),
         ];
     }
 }
