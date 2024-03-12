@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('customer_id')->nullable();
             $table->unsignedBigInteger('employee_id')->nullable();
+            $table->string('type'); // online/in-store
             $table->float('total',10,2);
             $table->timestamp('order_date');
             $table->string('status')->nullable();

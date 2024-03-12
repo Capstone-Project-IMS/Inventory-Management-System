@@ -26,4 +26,10 @@ class ProductStorage extends Model
     public function storageLocation(){
         return $this->belongsTo(StorageLocation::class);
     }
+
+    protected $fillable = [
+        'product_details_id',
+        'storage_location_id',
+        'quantity',
+    ];
 }

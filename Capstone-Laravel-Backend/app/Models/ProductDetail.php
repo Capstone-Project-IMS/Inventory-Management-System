@@ -81,16 +81,66 @@ class ProductDetail extends Model
         return $this->hasMany(Log::class, 'product_details_id');
     }
 
+    /**
+        This product config has many cart items
+       * @see CartItem::Method
+    */
+    public function cartItems()
+    {
+        return $this->hasMany(CartItem::class, 'product_details_id');
+    }
 
+    // Get the configuration of the product
     public function getConfigurationAttribute()
     {
-        return $this->color . " " . $this->size;
+        $color = $this->color ?? "";
+        $size = $this->size ?? "";
+        return $this->product->name . " " . $color . " " . $size;
+    }
+
+    // Get the total quantity in storage
+    public function getStorageAttribute()
+    {
+        return $this->productStorages->sum('quantity');
+    }
+
+    public function getFloorCountAttribute()
+    {
+        return $this->floorLocation->current_capacity;
+    }
+
+    // Check if product is available online
+    public function isAvailableOnline()
+    {
+        return $this->storage > 0;
+    }
+
+    // decrease the quantity in storage after a purchase or refilling the floor
+    public function decreaseStorage($quantity)
+    {
+        $this->productStorages->each(function ($storage) use ($quantity) {
+            if($storage->quantity >= $quantity){
+                $storage->decrement('quantity', $quantity);
+                $quantity = 0;
+                return true;
+            }
+            else{
+                return false;
+            }
+        });
+
     }
 
     // Load all relations
     public function loadAllRelations()
     {
         return $this->load('product', 'floorLocation', 'productStorages', 'priority', 'logs', 'purchaseOrderDetails', 'salesOrderDetails', 'floorLocation.location', 'productStorages.storageLocation', 'productStorages.storageLocation.location');
+    }
+
+    // Check if amount is available
+    public function isAvailable($requestQuantity)
+    {
+        return $this->storage >= $requestQuantity;
     }
     protected $fillable = [
         'product_id',

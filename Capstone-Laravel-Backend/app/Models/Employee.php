@@ -146,6 +146,13 @@ class Employee extends Model
         $weeklyPay = $this->getWeeklyHoursAttribute() * $this->hourly_rate;
         return round($weeklyPay, 2);
     }
+
+    // fulfill sales order item
+    public function fulfillOrder($orderId, $barcode){
+        
+    }
+
+
     protected $fillable = [
         'user_id',
         'employee_type_id',

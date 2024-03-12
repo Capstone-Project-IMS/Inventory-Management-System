@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ProductDetail;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProductDetailsController extends Controller
 {
@@ -26,6 +27,7 @@ class ProductDetailsController extends Controller
     /**
      * get this specific product detail
      */
+    //* response: 200 Product Retrieved Successfully, 404 Product Not Found
     public function show(string $id)
     {
         $product = ProductDetail::find($id);

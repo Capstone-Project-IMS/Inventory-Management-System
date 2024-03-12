@@ -25,7 +25,7 @@ class CheckUserUpdatePermission
 
         // If the current user is not the user to update and the current user is a manager or admin and the user to update is not an employee
         if ($currentUser->id !== $userToUpdate->id && ($currentUser->hasRole(['admin', 'management'])) && !$userToUpdate->isEmployee()) {
-            return response()->json(['error' => 'Managers and admins can only update employee users.'], 403);
+            return response()->json(['error' => 'Managers and Admins Can Only Update Employee Users.'], 403);
         }
         return $next($request);
     }

@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
      * @see SalesOrder
      * @see ActionSeeder
      * @see PurchaseOrderDetailsSeeder
-     * @see 
+     * @see CartItemSeeder
      * 
      */
     public function run(): void
@@ -43,6 +43,8 @@ class DatabaseSeeder extends Seeder
                 SalesOrderSeeder::class,
                 PurchaseOrderDetailsSeeder::class,
                 SalesOrderDetailsSeeder::class,
+                CartItemSeeder::class,
+                //! No LogSeeder
 
 
             ]

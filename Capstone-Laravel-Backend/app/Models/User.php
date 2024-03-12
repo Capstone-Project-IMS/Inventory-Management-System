@@ -242,6 +242,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return $query->get();
     }
 
+
     /**
      * The attributes that are mass assignable.
      *

@@ -61,11 +61,15 @@ class UserSeeder extends Seeder
         // Create Each Of Our Users
 
         foreach ($users as $user) {
-            User::create($user);
+            $newUser = User::create($user);
             // put us in employee table with management role
             Employee::factory()->create([
                 'user_id' => User::where('email', $user['email'])->first()->id,
                 'employee_type_id' => EmployeeType::where('role', 'management')->first()->id,
+            ]);
+            // create customer accounts for us
+            Customer::create([
+                'user_id' => $newUser->id,
             ]);
         }
 

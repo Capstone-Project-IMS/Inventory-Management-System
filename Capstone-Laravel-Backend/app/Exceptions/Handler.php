@@ -16,7 +16,7 @@ class Handler extends ExceptionHandler
      */
     protected function unauthenticated($request, AuthenticationException $exception)
     {
-        return response()->json(['error' => 'Unauthorized'], 401);
+        return response()->json(['error' => 'Please Log In To View This Page'], 401);
     }
 
     public function render($request, Throwable $exception)
@@ -31,9 +31,9 @@ class Handler extends ExceptionHandler
 
         // if the user is not authenticated
         if ($exception instanceof AuthenticationException) {
-            // return {error: 'Unauthorized'} with a 401 status code
+            // return {error: 'You Do Not Have Permission To View This Page'} with a 401 status code
             return response()->json([
-                'error' => 'Unauthorized'
+                'error' => 'You Do Not Have Permission To View This Page'
             ], 401);
         }
 

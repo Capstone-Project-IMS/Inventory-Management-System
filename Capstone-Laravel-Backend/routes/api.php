@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CartItemController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\ProductDetailsController;
@@ -51,50 +52,100 @@ Route::get('/products', [ProductController::class, 'index'])->name('products.ind
 Route::get('/products/{id}', [ProductController::class, 'show'])->name('product.show');
 //* Get specific product detail
 Route::get('/product/{id}', [ProductDetailsController::class, 'show'])->name('product.show');
+//! Available online products
+// Route::get('/products/available', [ProductController::class, 'availableOnline'])->name('products.available');
+//* Filter and search products
+Route::get('/products/filter/search', [ProductController::class, 'filterProducts'])->name('products.filter');
 
 
 //* All routes below this line require a valid token
 Route::middleware('auth:sanctum')->group(function () {
-    //* Get the logged in user information with relationships
+    //* ALL USER ROUTES
+    // Get the logged in user information with relationships
     Route::get('/user', [UserController::class, 'dashboard'])->name('app.user');
-    //* Edit user information uses user.update middleware to check if user is updating their own information or a manager is updating an employee
+    // Edit user information uses user.update middleware to check if user is updating their own information or a manager is updating an employee
     Route::patch('/user', [UserController::class, 'update'])->middleware('user.update')->name('user.update');
-    //* Delete user
+    // Delete user
     Route::delete('/user', [UserController::class, 'destroy'])->name('user.destroy');
+    //* END ALL USER ROUTES
 
-    //* Get all users as admin
-    Route::get('/users', [UserController::class, 'index'])->middleware('role:admin')->name('users.index');
+    //* CUSTOMER ONLY ROUTES
+    Route::middleware('role:admin,customer')->group(function () {
+        // View Cart
+        Route::get('/cart', [CartItemController::class, 'index'])->name('cart.index');
+        // View Saved Cart
+        Route::get('/cart/saved', [CartItemController::class, 'saved'])->name('cart.saved');
+        // Add to cart pass the id of the product detail you want to add to cart
+        Route::post('/cart/{id}', [CartItemController::class, 'addToOnlineCart'])->name('cart.add');
+        // save cart item pass the id of the cart item you want to save
+        Route::patch('/cart/save/{id}', [CartItemController::class, 'toggleCartItemSave'])->middleware('cart.item.owner')->name('cart.save');
+        // Update cart item quantity pass the cart item id
+        Route::patch('/cart/quantity/{id}', [CartItemController::class, 'updateQuantity'])->middleware('cart.item.owner')->name('cart.quantity');
+        // Delete cart item pass the cart item id
+        Route::delete('/cart/{id}', [CartItemController::class, 'destroy'])->middleware('cart.item.owner')->name('cart.destroy');
 
-    //* Vendor add contact only accessible by primary contacts
-    Route::post('/vendor/addContact', [VendorController::class, 'addContact'])->name('vendor.add.contact');
+        //? Add checkout route to confirm purchase before removing inventory
+        //? Route::post('/cart/checkout', [SalesOrderController::class, 'checkout'])->name('cart.checkout');
+        // Purchase cart items adds all in-cart items to a sales order
+        Route::post('/cart/online/order', [SalesOrderController::class, 'orderOnline'])->name('cart.order');
 
-    //* Employee clock in/out
-    Route::post('/employee/clock', [EmployeeController::class, 'clock'])->middleware('role:management,general,fulfillment,receiving')->name('employee.clock');
+
+    });
+
+    //* ADMIN ONLY ROUTES
+    Route::middleware('role:admin')->group(function () {
+        // Get all users as admin
+        Route::get('/users', [UserController::class, 'index'])->middleware('role:admin')->name('users.index');
+    });
+
+
+    //* VENDOR ONLY ROUTES
+    Route::middleware('role:vendor')->group(function () {
+        // Vendor add contact only accessible by primary contacts
+        Route::post('/vendor/addContact', [VendorController::class, 'addContact'])->name('vendor.add.contact');
+    });
+
+
+    //* ALL EMPLOYEE ROUTES
+    Route::middleware('role:management,general,fulfillment,receiving')->group(function () {
+        // Employee clock in/out
+        Route::post('/employee/clock', [EmployeeController::class, 'clock'])->name('employee.clock');
+    });
+
+    //* FULFILLMENT EMPLOYEE ROUTES
+    Route::middleware('role:fulfillment,management,admin')->group(function () {
+        // Get all SalesOrders
+        Route::get('/sales', [SalesOrderController::class, 'index'])->name('sales.orders.index');
+        // Get individual SalesOrder
+        Route::get('/sales/{id}', [SalesOrderController::class, 'show'])->name('sales.order.show');
+        // Fulfill SalesOrderDetails
+        Route::patch('/sales/fulfill/{id}/{barcode)', [SalesOrderController::class, 'fulfill'])->name('sales.fulfill');
+    });
 
     //* MANAGER ONLY ROUTES
     Route::middleware('role:management')->group(function () {
-        //* Employee registration
+        // Employee registration
         Route::post('/register/employee', [EmployeeController::class, 'register'])->name('employee.register');
 
-        //* Get all employees
+        // Get all employees
         Route::get('/employees', [EmployeeController::class, 'index'])->name('employees.index');
 
-        //* Get individual employee
+        // Get individual employee
         Route::get('/employee/{id}', [EmployeeController::class, 'show'])->name('employee.show');
 
-        //* Update employee employee type or hourly rate
+        // Update employee employee type or hourly rate
         Route::put('/employee/{id}', [EmployeeController::class, 'update'])->name('employee.update');
 
-        //* Edit employee user information pass the user id of the employee you want to edit
+        // Edit employee user information pass the user id of the employee you want to edit
         Route::patch('/employee/{user}/user', [UserController::class, 'update'])->middleware('user.update')->name('employee.user.update');
 
-        //* Delete employee
+        // Delete employee
         Route::delete('/employee/{id}', [EmployeeController::class, 'destroy'])->name('employee.destroy');
 
-        //* Get all SalesOrders
+        // Get all SalesOrders
         Route::get('/sales', [SalesOrderController::class, 'index'])->name('sales.orders.index');
 
-        //* Get individual SalesOrder
+        // Get individual SalesOrder
         Route::get('/sales/{id}', [SalesOrderController::class, 'show'])->name('sales.order.show');
 
     });

@@ -32,12 +32,6 @@ class Location extends Model
 
     protected $fillable = [
         'name',
-        'type',
-        'aisle',
-        'row',
-        'position',
-        'max_capacity',
-        'current_capacity',
     ];
         
 }

@@ -15,10 +15,14 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->unsignedBigInteger('product_details_id')->nullable();
+            $table->unsignedBigInteger('sales_order_id')->nullable();
+            $table->unsignedBigInteger('purchase_order_id')->nullable();
             $table->unsignedBigInteger('action_id');
             $table->string('description')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
             $table->foreign('product_details_id')->references('id')->on('product_details')->onDelete('set null');
+            $table->foreign('sales_order_id')->references('id')->on('sales_orders')->onDelete('set null');
+            $table->foreign('purchase_order_id')->references('id')->on('purchase_orders')->onDelete('set null');
             $table->foreign('action_id')->references('id')->on('actions')->onDelete('restrict');
             $table->timestamps();
         });

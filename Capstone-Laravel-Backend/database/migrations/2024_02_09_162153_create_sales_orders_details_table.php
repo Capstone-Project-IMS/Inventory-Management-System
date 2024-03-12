@@ -17,6 +17,7 @@ return new class extends Migration
             $table->unsignedBigInteger('product_details_id')->nullable();
             $table->integer('quantity');
             $table->float('price', 10, 2);
+            $table->string('status')->default('pending');
             $table->foreign('sales_order_id')->references('id')->on('sales_orders')->onDelete('restrict');
             $table->foreign('product_details_id')->references('id')->on('product_details')->onDelete('set null');
             $table->timestamps();

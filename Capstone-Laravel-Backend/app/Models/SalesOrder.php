@@ -24,7 +24,8 @@ class SalesOrder extends Model
        Many to One
        * @see Employee::salesOrders()
     */
-    public function employee(){
+    public function employee()
+    {
         return $this->belongsTo(Employee::class);
     }
 
@@ -33,20 +34,45 @@ class SalesOrder extends Model
        One to Many
        * @see SalesOrderDetail::salesOrder()
     */
-    public function salesOrderDetails(){
+    public function salesOrderDetails()
+    {
         return $this->hasMany(SalesOrderDetail::class);
     }
 
+    /**
+       This sales order has many logs
+       * @see Log::salesOrder()
+    */
+    public function logs()
+    {
+        return $this->hasMany(Log::class);
+    }
+
+    // Ship order if all sales order details are fulfilled
+    public function tryShipping()
+    {
+        // Check if all items in the order have been fulfilled
+        if ($this->salesOrderDetails()->where('status', '<>', 'fulfilled')->count() == 0) {
+            $this->status = 'shipped';
+            $this->save();
+            return true;
+        }
+        return false;
+    }
+
     // load all relations
-    public function loadAllRelations(){
+    public function loadAllRelations()
+    {
         return $this->load('customer', 'customer.user', 'employee', 'employee.user', 'salesOrderDetails', 'salesOrderDetails.productDetail', 'salesOrderDetails.productDetail.product');
     }
 
     protected $fillable = [
         'customer_id',
         'employee_id',
-        'total_price',
+        'total',
         'order_date',
+        'type',
+        'status'
 
     ];
 }

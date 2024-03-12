@@ -36,9 +36,27 @@ class Log extends Model
     public function action(){
         return $this->belongsTo(Action::class);
     }
+
+    /**
+       This log belongs to one sales order
+       * @see SalesOrder::logs()
+    */
+    public function salesOrder(){
+        return $this->belongsTo(SalesOrder::class);
+    }
+
+    /**
+       This log belongs to one purchase order
+       * @see PurchaseOrder::logs()
+    */
+    public function purchaseOrder(){
+        return $this->belongsTo(PurchaseOrder::class);
+    }
     protected $fillable = [
         'user_id',
         'product_detail_id',
+        'sales_order_id',
+        'purchase_order_id',
         'action_id',
         'description',
     ];

@@ -28,6 +28,7 @@ class AuthController extends Controller
     }
 
     // login
+    //* response: 200 Login Successful, 401 Email not verified, 401 Invalid credentials
     public function login(Request $request)
     {
         $request->validate(

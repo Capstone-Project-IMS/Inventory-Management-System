@@ -24,7 +24,7 @@ class SalesOrderDetailsSeeder extends Seeder
             $faker = \Faker\Factory::create();
             $productCount = $faker->numberBetween(1, 10);
 
-            for ($i=0; $i < $productCount; $i++) {
+            for ($i = 0; $i < $productCount; $i++) {
                 // random is a collection method that returns a random item from the collection
                 $productDetail = $productDetails->random();
                 // if the quantity is greater than the product detail quantity, set the quantity to the product detail quantity
@@ -35,7 +35,7 @@ class SalesOrderDetailsSeeder extends Seeder
                 $price = $quantity * $unitPrice;
                 // add the price to the total for this order
                 $total += $price;
-                $salesOrder->salesOrderDetail()->create([
+                $salesOrder->salesOrderDetails()->create([
                     'sales_order_id' => $salesOrder->id,
                     'product_details_id' => $productDetail->id,
                     'quantity' => $quantity,

@@ -19,12 +19,20 @@ class SalesOrderFactory extends Factory
     public function definition(): array
     {
         $status = ["pending", "processing", "completed", "cancelled"];
+        $types = ["in-store", "online"];
+        $type = $this->faker->randomElement($types);
+        // if type is in-store then status is completed
+        $orderStatus = $type === 'in-store' ? 'completed' : $this->faker->randomElement($status);
+        // if order type is online then employee id is null
+        $employeeId = $type === 'online' ? null : Employee::all()->random()->id;
+
         return [
             'customer_id' => Customer::all()->random()->id,
-            'employee_id' => Employee::all()->random()->id,
+            'employee_id' => $employeeId,
+            'type' => $type,
             'total' => 0,
             'order_date' => $this->faker->dateTimeThisYear,
-            'status' => $this->faker->randomElement($status),
+            'status' => $orderStatus,
         ];
     }
 }

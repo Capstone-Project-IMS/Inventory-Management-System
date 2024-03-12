@@ -17,7 +17,7 @@ class CheckRole
     public function handle(Request $request, Closure $next, string $role): Response
     {
         if (!Auth::check() || !Auth::user()->hasRole($role)) {
-            return response()->json(['error' => 'You do not have permission to view this page.'], 401);
+            return response()->json(['error' => 'You Do Not Have Permission To View This Page.'], 401);
         }
         return $next($request);
     }

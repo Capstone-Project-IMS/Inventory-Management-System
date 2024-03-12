@@ -38,6 +38,15 @@ class PurchaseOrder extends Model
     {
         return $this->belongsTo(Employee::class);
     }
+
+    /**
+       This purchase order has many logs, mix ekployee_id, sales_order_id, product_detail_id for scanning an item to fulfill the order 
+       * @see Log::purchaseOrder()
+    */
+    public function logs()
+    {
+        return $this->hasMany(Log::class);
+    }
     protected $fillable = [
         'vendor_id',
         'employee_id',
