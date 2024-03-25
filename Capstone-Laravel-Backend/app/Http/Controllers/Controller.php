@@ -35,6 +35,6 @@ class Controller extends BaseController
 
     public function errorResponse($message, $code = 400)
     {
-        return response()->json(['message' => $message], $code);
+        return response()->json(['error' => $message], $code);
     }
 }

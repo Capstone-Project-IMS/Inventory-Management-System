@@ -22,7 +22,7 @@ class SalesOrder extends Model
     /**
        This sales order belongs to one Employee
        Many to One
-       * @see Employee::salesOrder()
+       * @see Employee::salesOrders()
     */
     public function employee(){
         $this->belongsTo(Employee::class);

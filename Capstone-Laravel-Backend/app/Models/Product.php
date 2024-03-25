@@ -27,6 +27,11 @@ class Product extends Model
         return $this->hasMany(ProductDetail::class);
     }
 
+    // gets the total count of product details
+    public function getTotalCountAttribute(){
+        return $this->productDetails->sum('quantity');
+    }
+
     protected $fillable = [
         'vendor_id',
         'name',

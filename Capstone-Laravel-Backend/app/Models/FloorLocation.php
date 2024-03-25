@@ -14,7 +14,8 @@ class FloorLocation extends Model
      * Many to One
      * @see Location::floorLocations()
      */
-    public function location(){
+    public function location()
+    {
         return $this->belongsTo(Location::class);
     }
 
@@ -23,7 +24,8 @@ class FloorLocation extends Model
      * One to One
      * @see ProductDetail::floorLocation()
      */
-    public function productDetail(){
+    public function productDetail()
+    {
         return $this->belongsTo(ProductDetail::class);
     }
 }

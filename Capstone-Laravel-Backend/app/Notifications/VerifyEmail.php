@@ -39,13 +39,13 @@ class VerifyEmail extends VerifyEmailBase
             ->greeting($this->getGreeting($notifiable))
             ->line('Please click the button below to verify your email address.')
             ->action('Verify Email Address', $this->verificationUrl($notifiable))
-            ->salutation('Thank you for using our application!<br>- Jacob, Montez, and Chris')
+            ->salutation("Thank you for using our application!\n\n\- Jacob, Montez, and Chris")
             ->line('If you did not create an account, no further action is required.');
     }
 
     private function getGreeting($notifiable)
     {
-        switch ($notifiable->userType->role) {
+        switch ($notifiable->type) {
             case 'customer':
                 return 'Thank you for becoming a customer, ' . $notifiable->full_name;
             case 'vendor':
@@ -55,7 +55,7 @@ class VerifyEmail extends VerifyEmailBase
             default:
                 return 'Hello, ' . $notifiable->first_name;
         }
-    } 
+    }
     /**
      * Get the array representation of the notification.
      *

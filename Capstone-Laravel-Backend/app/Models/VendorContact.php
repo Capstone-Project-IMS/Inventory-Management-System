@@ -22,7 +22,7 @@ class VendorContact extends Model
     /**
      * This vendor contact belongs to one user
      * One to One
-     * @see User::vendorContacts()
+     * @see User::vendorContact()
      */
     public function user()
     {
@@ -32,5 +32,6 @@ class VendorContact extends Model
     protected $fillable = [
         'vendor_id',
         'user_id',
+        'is_primary',
     ];
 }
